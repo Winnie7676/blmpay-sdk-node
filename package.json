@@ -1,0 +1,13 @@
+{
+  "name": "@blmsoft/blmpay",
+  "version": "0.1.0",
+  "description": "Official Node.js SDK for BLMPay REST API",
+  "type": "module",
+  "main": "./src/index.js",
+  "exports": "./src/index.js",
+  "engines": {"node": ">=18"},
+  "license": "MIT",
+  "repository": {"type": "git", "url": "https://github.com/Winnie7676/blmpay-sdk-node.git"},
+  "homepage": "https://github.com/Winnie7676/blmpay-sdk-node#readme",
+  "bugs": {"url": "https://github.com/Winnie7676/blmpay-sdk-node/issues"}
+}
