@@ -5,10 +5,14 @@ export class BlmPayError extends Error {
 }
 
 export class BlmPay {
-  constructor({ apiKey, baseUrl = 'https://pay.blmtec.co.tz/api/v1', timeoutMs = 30000 } = {}) {
+  constructor({ apiKey, baseUrl = 'https://pay.blmtec.co.tz/api/v1', timeoutMs = 30000, integrationOrigin = null } = {}) {
     if (!apiKey) throw new TypeError('BLMPay apiKey is required');
-    this.apiKey = apiKey; this.baseUrl = baseUrl.replace(/\/$/, ''); this.timeoutMs = timeoutMs;
+    this.apiKey = apiKey;
+    this.baseUrl = baseUrl.replace(/\/$/, '');
+    this.timeoutMs = timeoutMs;
+    this.integrationOrigin = this.#normalizeIntegrationOrigin(integrationOrigin);
   }
+  setIntegrationOrigin(origin) { this.integrationOrigin = this.#normalizeIntegrationOrigin(origin); return this; }
   listPayments = q => this.request('GET', '/payments', {query:q});
   getPayment = ref => this.request('GET', `/payments/${encodeURIComponent(ref)}`);
   createPayment = (body, idempotencyKey) => this.request('POST', '/payments', {body, idempotencyKey});
@@ -37,6 +41,7 @@ export class BlmPay {
     for (const [k,v] of Object.entries(query || {})) if (v !== undefined && v !== null && v !== '') url.searchParams.set(k, String(v));
     const controller = new AbortController(); const timer = setTimeout(() => controller.abort(), this.timeoutMs);
     const headers = {Authorization:`Bearer ${this.apiKey}`, Accept:'application/json'};
+    if (this.integrationOrigin) headers['X-BLMPay-Origin'] = this.integrationOrigin;
     if (body !== undefined) headers['Content-Type'] = 'application/json';
     if (idempotencyKey) headers['Idempotency-Key'] = idempotencyKey;
     try {
@@ -49,6 +54,14 @@ export class BlmPay {
       if (e instanceof BlmPayError) throw e;
       throw new BlmPayError(e?.name === 'AbortError' ? 'BLMPay request timed out.' : 'BLMPay connection failed.', {response:e});
     } finally { clearTimeout(timer); }
+  }
+
+  #normalizeIntegrationOrigin(origin) {
+    if (origin === undefined || origin === null || String(origin).trim() === '') return null;
+    let url;
+    try { url = new URL(String(origin).trim()); } catch { throw new TypeError('BLMPay integrationOrigin must be a valid HTTPS URL.'); }
+    if (url.protocol !== 'https:' || !url.hostname) throw new TypeError('BLMPay integrationOrigin must use HTTPS, for example https://example.com.');
+    return String(origin).trim();
   }
 }
 
