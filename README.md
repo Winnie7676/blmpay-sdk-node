@@ -7,7 +7,7 @@ Official Node.js SDK for BLMPay API v1. Node.js 18+.
 Until the npm registry release is published, install directly from the official repository:
 
 ```bash
-npm install github:Winnie7676/blmpay-sdk-node
+npm install github:blmsoft/blmpay-sdk-node
 ```
 
 The package name is `@blmsoft/blmpay`:
@@ -43,7 +43,7 @@ The SDK covers payments, balance, payment links, invoices, payouts, payout fee q
 
 Never expose a live merchant API key in browser JavaScript, a public frontend build, APK/IPA or source control. Keep privileged BLMPay credentials on your backend. Use a unique idempotency key for each new payment or payout attempt.
 
-OpenAPI: https://github.com/Winnie7676/blmpay-openapi
-MCP: https://github.com/Winnie7676/blmpay-mcp
+OpenAPI: https://github.com/blmsoft/blmpay-openapi
+MCP: https://github.com/blmsoft/blmpay-mcp
 
 MIT License. Powered by BLMSoft.
